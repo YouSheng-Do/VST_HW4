@@ -52,25 +52,7 @@ def capture_video():
 
         to_draw, last_coordinates = tracker.track(frame, bboxes, scores.flatten(),to_draw, select_coordinates, last_coordinates)
         last_total_people = n_objects
-        # select_coordinates = None
-        # if i>100 and i<=500:
-        #     print("100")
-        #     to_draw = [1,1,0]
-        #     tracker.track(frame, bboxes, scores.flatten(),to_draw)
-        # elif i>500:
-        #     print("500")
-        #     to_draw = [0,0,1]
-        #     tracker.track(frame, bboxes, scores.flatten(),to_draw)
-        # else:
-        #     to_draw = [1,1,1]
-        #     tracker.track(frame, bboxes, scores.flatten(),to_draw)
-        
-        # track targets by refining with DeepSORT
-        # tracker.track(frame, bboxes, scores.flatten())
-        # for track in tracker.tracker.tracks:
-        #     print(track.track_id,end=',')
-        # print('\n')
-        # write to output video
+
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
         # 將frame轉換為JPEG格式

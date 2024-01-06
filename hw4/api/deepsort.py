@@ -44,7 +44,7 @@ class DeepSORTTracker:
         # if select_coordinates is not None:
             for track in self.tracker.tracks:
                 box = track.to_tlbr().astype(np.int32)
-                print(box)
+                # print(box)
                 if select_coordinates[0] > box[0] and select_coordinates[0] < box[2] \
                      and select_coordinates[1] > box[1] and select_coordinates[1] < box[3]:
                     to_draw[track.track_id-1] = not to_draw[track.track_id-1]
@@ -55,28 +55,29 @@ class DeepSORTTracker:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
             bbox = track.to_tlbr().astype(np.int32)
-            color = self.colors[track.track_id % 20]
+            #color = self.colors[track.track_id % 20]
+            color = (255, 255, 255)
             if to_draw[track.track_id-1]:
             # if True:
 
                 # draw detection bounding box
                 cv2.rectangle(frame, tuple(bbox[:2]), tuple(bbox[2:]), color, 2)
                 # draw text box for printing ID
-                cv2.rectangle(
-                    frame,
-                    tuple(bbox[:2]),
-                    (bbox[0] + (4 + len(str(track.track_id))) * 8, bbox[1] + 20),
-                    color,
-                    -1,
-                )
+                # cv2.rectangle(
+                #     frame,
+                #     tuple(bbox[:2]),
+                #     (bbox[0] + (4 + len(str(track.track_id))) * 8, bbox[1] + 20),
+                #     color,
+                #     -1,
+                # )
                 # print ID in the text box
-                cv2.putText(
-                    frame,
-                    f"ID: {track.track_id}",
-                    (bbox[0] + 4, bbox[1] + 13),
-                    cv2.FONT_HERSHEY_DUPLEX,
-                    0.4,
-                    (0, 0, 0),
-                    lineType=cv2.LINE_AA,
-                )
+                # cv2.putText(
+                #     frame,
+                #     f"ID: {track.track_id}",
+                #     (bbox[0] + 4, bbox[1] + 13),
+                #     cv2.FONT_HERSHEY_DUPLEX,
+                #     0.4,
+                #     (0, 0, 0),
+                #     lineType=cv2.LINE_AA,
+                # )
         return to_draw, last_coordinates

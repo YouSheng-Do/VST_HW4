@@ -14,7 +14,7 @@ class YOLOPersonDetector:
     a checkpoint file, and one that accepts an image to return a tensor of detections.
     """
 
-    def __init__(self, conf_th: float = 0.25, iou_th: float = 0.45) -> None:
+    def __init__(self, conf_th: float = 0.5, iou_th: float = 0.45) -> None:
         self.conf_th = conf_th
         self.iou_th = iou_th
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

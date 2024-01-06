@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <img id="videoStream" src="/video_feed" style="display: none;">
+        <canvas id="myCanvas" width="640" height="480"></canvas>
+    
+        <script>
+            var canvas = document.getElementById('myCanvas');
+            var ctx = canvas.getContext('2d');
+            var img = document.getElementById('videoStream');
+    
+            function updateCanvas() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(updateCanvas);
+            }
+    
+            updateCanvas();
+        </script>
+    </body>
+        
+    <script>
+        var canvas = document.getElementById('myCanvas');
+        var ctx = canvas.getContext('2d');
+        var rect = {};
+        var drag = false;
+
+        function init() {
+            canvas.addEventListener('mouseup', mouseUp, false);
+        }
+
+        function mouseUp(e) {
+            var x = e.pageX - canvas.offsetLeft;
+            var y = e.pageY - canvas.offsetTop;
+            console.log("Mouse X: " + x + ", Mouse Y: " + y);
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/handle_click", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(JSON.stringify({ x: x, y: y }));
+        }
+
+        init();
+    </script>
+
+    </body>
+</html>

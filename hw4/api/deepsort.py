@@ -28,7 +28,7 @@ class DeepSORTTracker:
         )
         self.colors = plt.get_cmap("hsv")(np.linspace(0, 1, 20, False))[:, :3] * 255
 
-    def track(self, frame: np.ndarray, bboxes: np.ndarray, scores: np.ndarray) -> None:
+    def track(self, frame: np.ndarray, bboxes: np.ndarray, scores: np.ndarray, to_draw, select_coordinates, last_coordinates):
         """
         Accepts an image and its YOLO detections, uses these detections and existing tracks to get a
         final set of bounding boxes, which are then drawn onto the input image
@@ -40,29 +40,43 @@ class DeepSORTTracker:
         self.tracker.predict()
         self.tracker.update(dets)
 
+        if last_coordinates != select_coordinates:
+        # if select_coordinates is not None:
+            for track in self.tracker.tracks:
+                box = track.to_tlbr().astype(np.int32)
+                print(box)
+                if select_coordinates[0] > box[0] and select_coordinates[0] < box[2] \
+                     and select_coordinates[1] > box[1] and select_coordinates[1] < box[3]:
+                    to_draw[track.track_id-1] = not to_draw[track.track_id-1]
+                    last_coordinates = select_coordinates
+
         # render the final tracked bounding boxes on the input frame
         for track in self.tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
             bbox = track.to_tlbr().astype(np.int32)
             color = self.colors[track.track_id % 20]
-            # draw detection bounding box
-            cv2.rectangle(frame, tuple(bbox[:2]), tuple(bbox[2:]), color, 2)
-            # draw text box for printing ID
-            cv2.rectangle(
-                frame,
-                tuple(bbox[:2]),
-                (bbox[0] + (4 + len(str(track.track_id))) * 8, bbox[1] + 20),
-                color,
-                -1,
-            )
-            # print ID in the text box
-            cv2.putText(
-                frame,
-                f"ID: {track.track_id}",
-                (bbox[0] + 4, bbox[1] + 13),
-                cv2.FONT_HERSHEY_DUPLEX,
-                0.4,
-                (0, 0, 0),
-                lineType=cv2.LINE_AA,
-            )
+            if to_draw[track.track_id-1]:
+            # if True:
+
+                # draw detection bounding box
+                cv2.rectangle(frame, tuple(bbox[:2]), tuple(bbox[2:]), color, 2)
+                # draw text box for printing ID
+                cv2.rectangle(
+                    frame,
+                    tuple(bbox[:2]),
+                    (bbox[0] + (4 + len(str(track.track_id))) * 8, bbox[1] + 20),
+                    color,
+                    -1,
+                )
+                # print ID in the text box
+                cv2.putText(
+                    frame,
+                    f"ID: {track.track_id}",
+                    (bbox[0] + 4, bbox[1] + 13),
+                    cv2.FONT_HERSHEY_DUPLEX,
+                    0.4,
+                    (0, 0, 0),
+                    lineType=cv2.LINE_AA,
+                )
+        return to_draw, last_coordinates
